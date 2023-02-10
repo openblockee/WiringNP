@@ -57,6 +57,9 @@ BoardHardwareInfo gAllBoardHardwareInfo[] = {
     {"Allwinnersun8iFamily", 0, NanoPi_Duo2,     "NanoPi-Duo2",     "8(0)"},
     {"Allwinnersun8iFamily", 0, NanoPi_R1,       "NanoPi-R1",       "9(0)"},
 
+    // kernel 5.x
+    {"Allwinner sun8i Family", 0, NanoPi_Duo,      "NanoPi-Duo",      "4(0)"},
+
     // a64
     // {"sun50iw1p1", 0, NanoPi_A64, "NanoPi-A64", "0"},
     
@@ -158,8 +161,10 @@ static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
     int ret = -1;
 
     if (!(f = fopen("/sys/class/sunxi_info/sys_info", "r"))) {
-        LOGE("open /sys/class/sunxi_info/sys_info failed.");
-        return -1;
+        if (!(f = fopen("/etc//sys_info", "r"))) {
+            LOGE("open /sys/class/sunxi_info/sys_info failed.");
+            return -1;
+        }
     }
 
     while (!feof(f)) {
@@ -220,6 +225,7 @@ int getBoardType(BoardHardwareInfo** retBoardInfo) {
     const char* h5 = "sun50iw2";
     const char* h3_kernel4 = "Allwinnersun8iFamily";
     const char* h5_kernel4 = "Allwinnersun50iw2Family";
+    const char* h3_kernel5 = "Allwinner sun8i Family";
 
     //a64 and amlogic, only check hardware
     if (strncasecmp(hardware, a64, strlen(a64)) == 0
@@ -239,7 +245,9 @@ int getBoardType(BoardHardwareInfo** retBoardInfo) {
 
     // h3 and h5, check hardware and boardid
     if (strncasecmp(hardware, h3, strlen(h3)) == 0 || strncasecmp(hardware, h5, strlen(h5)) == 0
-        || strncasecmp(hardware, h3_kernel4, strlen(h3_kernel4)) == 0 || strncasecmp(hardware, h5_kernel4, strlen(h5_kernel4)) == 0) {
+        || strncasecmp(hardware, h3_kernel4, strlen(h3_kernel4)) == 0 
+        || strncasecmp(hardware, h5_kernel4, strlen(h5_kernel4)) == 0
+        || strncasecmp(hardware, h3_kernel5, strlen(h3_kernel5)) == 0) {
         int ret = getAllwinnerBoardID(allwinnerBoardID, sizeof(allwinnerBoardID));
         if (ret == 0) {
             //LOGD("got boardid: %s\n", allwinnerBoardID);
