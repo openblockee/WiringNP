@@ -17,6 +17,30 @@ NanoPC T3
   
 # Installation
 
+修复在 armbain linux kernel5 + NanoPi Duo 下的运行。
+
+由于在 armbain linux kernel5 下，缺失了 `/sys/class/sunxi_info/sys_info` 内容，会导致 WiringNP 无法识别板子类型。
+我们需要手动创建一个文件并写入数据来让 WiringNP 读取。
+
+首先，在 `/etc/sys_info` 路径下创建文件写入 `sunxi_board_id`
+
+```
+sudo nano /etc/sys_info
+```
+
+文件中写入一下内容并保存
+
+```
+sunxi_board_id:4(0)
+```
+
+验证文件内容
+
+```
+$ cat /etc/sys_info
+sunxi_board_id:4(0)
+```
+
 ## Install WiringNP 
 Log into your nano board via SSH, open a terminal and install the WiringNP library by running the following commands:
 ```
